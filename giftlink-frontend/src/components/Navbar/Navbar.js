@@ -22,7 +22,7 @@ export default function Navbar() {
         }
     },[isLoggedIn, setIsLoggedIn, setUserName]);
 
-    const handleLogout=()=>{
+    const handleLogout = () => {
         sessionStorage.removeItem('auth-token');
         sessionStorage.removeItem('name');
         sessionStorage.removeItem('email');
@@ -30,7 +30,7 @@ export default function Navbar() {
         navigate(`/app`);
     }
 
-    const profileSection=()=> {
+    const profileSection = () => {
         navigate(`/app/profile`);
     }
 
