@@ -5,27 +5,28 @@ import {urlConfig} from '../../config';
 import { useAppContext } from '../../context/AuthContext';
 
 const Profile = () => {
-  const [userDetails, setUserDetails] = useState({});
- const [updatedDetails, setUpdatedDetails] = useState({});
- const {setUserName} = useAppContext();
- const [changed, setChanged] = useState("");
+    const [userDetails, setUserDetails] = useState({});
+    const [updatedDetails, setUpdatedDetails] = useState({});
+    const {setUserName} = useAppContext();
+    const [changed, setChanged] = useState("");
 
- const [editMode, setEditMode] = useState(false);
-  const navigate = useNavigate();
-  useEffect(() => {
-    const authtoken = sessionStorage.getItem("auth-token");
-    if (!authtoken) {
-      navigate("/app/login");
-    } else {
-      fetchUserProfile();
-    }
-  }, [navigate]);
+    const [editMode, setEditMode] = useState(false);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const authtoken = sessionStorage.getItem("auth-token");
+        if (!authtoken) {
+            navigate("/app/login");
+        } else {
+            fetchUserProfile();
+        }
+    }, [navigate]);
 
   const fetchUserProfile = async () => {
     try {
       const authtoken = sessionStorage.getItem("auth-token");
       const email = sessionStorage.getItem("email");
-      const name=sessionStorage.getItem('name');
+      const name = sessionStorage.getItem('name');
       if (name || authtoken) {
                 const storedUserDetails = {
                   name: name,
@@ -35,22 +36,23 @@ const Profile = () => {
                 setUserDetails(storedUserDetails);
                 setUpdatedDetails(storedUserDetails);
               }
-} catch (error) {
-  console.error(error);
-  // Handle error case
-}
+    } catch (error) {
+    console.error(error);
+    // Handle error case
+    }
 };
 
 const handleEdit = () => {
-setEditMode(true);
+    setEditMode(true);
 };
 
 const handleInputChange = (e) => {
-setUpdatedDetails({
-  ...updatedDetails,
-  [e.target.name]: e.target.value,
-});
+    setUpdatedDetails({
+    ...updatedDetails,
+    [e.target.name]: e.target.value,
+    });
 };
+
 const handleSubmit = async (e) => {
   e.preventDefault();
 
@@ -65,15 +67,20 @@ const handleSubmit = async (e) => {
 
     const payload = { ...updatedDetails };
     const response = await fetch(`${urlConfig.backendUrl}/api/auth/update`, {
-      //Step 1: Task 1
-      //Step 1: Task 2
-      //Step 1: Task 3
+    method: "PUT",
+      headers: {
+        "Authorization": `Bearer ${authtoken}`,
+        "Content-Type": "application/json",
+        "Email": email,
+      },
+      body: JSON.stringify(payload),
     });
 
     if (response.ok) {
       // Update the user details in session storage
-      //Step 1: Task 4
-      //Step 1: Task 5
+      setUserName(updatedDetails.name);
+      sessionStorage.setItem("name", updatedDetails.name);
+      
       setUserDetails(updatedDetails);
       setEditMode(false);
       // Display success message to the user
@@ -95,35 +102,33 @@ const handleSubmit = async (e) => {
 
 return (
 <div className="profile-container">
-  {editMode ? (
+{editMode ? (
 <form onSubmit={handleSubmit}>
-<label>
-  Email
-  <input
-    type="email"
-    name="email"
-    value={userDetails.email}
-    disabled // Disable the email field
-  />
-</label>
-<label>
-   Name
-   <input
-     type="text"
-     name="name"
-     value={updatedDetails.name}
-     onChange={handleInputChange}
-   />
-</label>
+    <label>Email
+    <input
+        type="email"
+        name="email"
+        value={userDetails.email}
+        disabled // Disable the email field
+    />
+    </label>
+    <label>Name
+    <input
+        type="text"
+        name="name"
+        value={updatedDetails.name}
+        onChange={handleInputChange}
+    />
+    </label>
 
-<button type="submit">Save</button>
+    <button type="submit">Save</button>
 </form>
 ) : (
 <div className="profile-details">
-<h1>Hi, {userDetails.name}</h1>
-<p> <b>Email:</b> {userDetails.email}</p>
-<button onClick={handleEdit}>Edit</button>
-<span style={{color:'green',height:'.5cm',display:'block',fontStyle:'italic',fontSize:'12px'}}>{changed}</span>
+    <h1>Hi, {userDetails.name}</h1>
+    <p> <b>Email:</b> {userDetails.email}</p>
+    <button onClick={handleEdit}>Edit</button>
+    <span style={{color:'green',height:'.5cm',display:'block',fontStyle:'italic',fontSize:'12px'}}>{changed}</span>
 </div>
 )}
 </div>
