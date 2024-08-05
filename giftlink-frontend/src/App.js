@@ -10,7 +10,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
 function App() {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     return (
         <>
             <Navbar/>
